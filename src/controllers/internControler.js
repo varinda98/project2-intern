@@ -1,15 +1,26 @@
-const { find } = require("../models/College Model");
-const collegeModels = require("../models/College Model");
-const internModels = require("../models/Intern Model");
-const  emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const  mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+
+const collegeModels = require("../models/collegeModel");
+const internModels = require("../models/internModel");
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+
 
 const createInterns = async function (req, res) {
+
+
     try {
         let { name, email, mobile, collegeId, collegeName, isDeleted, ...rest } = req.body;
 
-        if (Object.keys(rest) != 0) return
+        if (Object.keys(rest) != 0) return res.status(400).send({ status: false, msg: "Please provide required details only" })
+
+        if (email) {
+            if (!emailRegex.test(email)) return res.status(400).send({ status: false, msg: "Invalid Emailid" })
+        }
         let findnumber = await internModels.find({ mobile: mobile })
+
+        let findemail = await internModels.find({ email: email })
+        if (findnumber.length > 0) return res.status(400).send({ status: false, msg: "mobile no. is already exist" })
+
         if (findemail.length > 0) return res.status(400).send({ status: false, msg: "email id is already exist" })
 
         if (mobile) {
@@ -20,6 +31,7 @@ const createInterns = async function (req, res) {
 
         const collegeNames = await collegeModels.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }] })
         if (!collegeNames) return res.status(404).send({ status: false, msg: "college name is invalid" })
+
         collegeId = collegeNames._id
 
         let data = { name, email, mobile, collegeId, collegeName, isDeleted }
@@ -35,4 +47,4 @@ const createInterns = async function (req, res) {
 
 
 
-module.exports.createInterns=createInterns
+module.exports.createInterns = createInterns
