@@ -12,7 +12,7 @@ const createInterns = async function (req, res) {
     try {
         let { name, email, mobile, collegeId, collegeName, isDeleted, ...rest } = req.body;
 
-        if (Object.keys(rest) != 0) return res.status(400).send({ status: false, msg: "Please provide required details only" })
+        if (Object.keys(req.body) == 0) return res.status(400).send({ status: false, msg: "Please provide required details only" })
 
         if (!name || !email || !mobile || !collegeName) return res.status(400).send({ status: false, msg: "Mandatory fields are Required" })
 
@@ -34,6 +34,9 @@ const createInterns = async function (req, res) {
         const collegeNames = await collegeModels.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }] })
         if (!collegeNames) return res.status(404).send({ status: false, msg: "College not exist" })
 
+        if(collegeNames.isDeleted == true) {return res.status(404).send({ status: false, msg: "College not found" })
+    }
+
         collegeId = collegeNames._id
 
         let data = { name, email, mobile, collegeId, collegeName, isDeleted }
@@ -41,6 +44,7 @@ const createInterns = async function (req, res) {
         const internData = await internModels.create(data);
 
         res.status(201).send({ status: true, message: "Registration Successfull", data: internData })
+
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
 

@@ -30,7 +30,7 @@ const college = async function (req, res) {
             return res.status(400).send({status:false,msg:"Please provide a valid link"})
         }
         const create = await collegeModel.create(data)
-        return res.status(200).send({ status: true, msg: create })
+        return res.status(201).send({ status: true, msg: create })
         }
     
     catch (err) {
