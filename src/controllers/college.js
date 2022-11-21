@@ -1,5 +1,6 @@
 //var http = require("http");
 const url = require('url').URL;
+ let nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
 const collegeModel = require('../models/collegeModel')
 const internModels=require('../models/internModel')
 
@@ -12,19 +13,26 @@ const stringIsAValidUrl = (str) => {
 const college = async function (req, res) {
     try {
         const data = req.body
-        const { name, fullName, logoLink, isDeleted } = data
+        const { name, fullName, logoLink} = data
         if (!name || !fullName || !logoLink) {
-            return res.status(400).send({ status: false, msg: "All filds are required" })
+            return res.status(400).send({ status: false, msg: "All fields are required" })
         }
-        else {
-            if(!stringIsAValidUrl(logoLink))
-            {
-                return res.status(400).send({status:false,msg:"Please provide a valid link"})
-            }
-            const create = await collegeModel.create(data)
-            return res.status(200).send({ status: true, msg: create })
+
+        if(!nameRegex.test(name)) {return res.status(400).send({status:false, message:"Name is not Valid, use Alphabets"})}
+
+        let nameExist = await collegeModel.findOne({name:name})
+
+        if(nameExist) { return res.status(400).send({status:false, message:" Name is already exist"})}
+
+        if(!nameRegex.test(fullName)) {return res.status(400).send({status:false, message:"fullName is not Valid, use Alphabets"})}
+        
+        if(!stringIsAValidUrl(logoLink)){
+            return res.status(400).send({status:false,msg:"Please provide a valid link"})
         }
-    }
+        const create = await collegeModel.create(data)
+        return res.status(200).send({ status: true, msg: create })
+        }
+    
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }
@@ -36,8 +44,8 @@ const getcollegedetail = async (req, res) => {
 
         //if (!validData(collegeName)) return res.status(400).send({ status: true, Message: "Please Enter College name" })
 
-        let findnameindb = await collegeModel.findOne({ name: collegeName })
-        if (!findnameindb) return res.status(404).send({ status: true, Message: "College Name not found please enter valid name" })
+        let findnameindb = await collegeModel.findOne({ $or:[{name: collegeName}, {fullName:collegeName}] })
+        if (!findnameindb) return res.status(404).send({ status: true, Message: "College Name not found, please enter valid name" })
 
 
         let findintern = await internModels.find({ collegeId: findnameindb._id })
