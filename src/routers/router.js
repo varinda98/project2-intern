@@ -2,7 +2,7 @@ const express = require('express');
 const collegeControler=require("../controllers/college");
 
 const internControl= require('../controllers/internControler')
-const router=express()
+const router=express.Router()
 
 router.post("/functionup/colleges",collegeControler.college)
 

@@ -1,6 +1,7 @@
-//var http = require("http");
-const url = require('url').URL;
- let nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
+
+ let nameRegex = /^[a-z]+(([',. -][a-z])?[a-z]*)*$/
+ let nameRegex1 = /^[a-zA-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
+
 const collegeModel = require('../models/collegeModel')
 const internModels=require('../models/internModel')
 
@@ -24,7 +25,7 @@ const college = async function (req, res) {
 
         if(nameExist) { return res.status(400).send({status:false, message:" Name is already exist"})}
 
-        if(!nameRegex.test(fullName)) {return res.status(400).send({status:false, message:"fullName is not Valid, use Alphabets"})}
+        if(!nameRegex1.test(fullName)) {return res.status(400).send({status:false, message:"fullName is not Valid, use Alphabets"})}
         
         if(!stringIsAValidUrl(logoLink)){
             return res.status(400).send({status:false,msg:"Please provide a valid link"})
@@ -48,7 +49,7 @@ const getcollegedetail = async (req, res) => {
         if (!findnameindb) return res.status(404).send({ status: true, Message: "College Name not found, please enter valid name" })
 
 
-        let findintern = await internModels.find({ collegeId: findnameindb._id })
+        let findintern = await internModels.find({ collegeId: findnameindb._id, isDeleted: false })
 
         if (findintern.length > 0) findnameindb.interns = findintern
         if (findintern.length == 0) findnameindb.interns = "Intern not Found"
