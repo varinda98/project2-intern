@@ -16,11 +16,11 @@ const college = async function (req, res) {
             return res.status(400).send({ status: false, msg: "All fields are required" })
         }
 
-        if(!nameRegex.test(name)) {return res.status(400).send({status:false, message:"Name is not Valid, use Alphabets"})}
+        if(!nameRegex.test(name)) {return res.status(400).send({status:false, message:"Name is not Valid, use lowercase alphabets only"})}
 
         let nameExist = await collegeModel.findOne({name:name})
 
-        if(nameExist) { return res.status(400).send({status:false, message:" Name is already exist"})}
+        if(nameExist) { return res.status(400).send({status:false, message:" College is already exist"})}
 
         if(!nameRegex1.test(fullName)) {return res.status(400).send({status:false, message:"fullName is not Valid, use Alphabets"})}
         
@@ -40,7 +40,7 @@ const getcollegedetail = async (req, res) => {
     try {
         let { collegeName } = req.query
 
-        //if (!validData(collegeName)) return res.status(400).send({ status: true, Message: "Please Enter College name" })
+        if (!collegeName) return res.status(400).send({ status: true, Message: "Please Enter College name" })
 
         let findnameindb = await collegeModel.findOne({ $or:[{name: collegeName}, {fullName:collegeName}] })
         if (!findnameindb) return res.status(404).send({ status: true, Message: "College Name not found, please enter valid name" })

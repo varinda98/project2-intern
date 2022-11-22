@@ -3,14 +3,14 @@ const collegeModels = require("../models/collegeModel");
 const internModels = require("../models/internModel");
 let nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+const mobileRegex =/^(\+\d{1,3}[- ]?)?\d{10}$/;
 
 
 const createInterns = async function (req, res) {
 
 
     try {
-        let { name, email, mobile, collegeId, collegeName, isDeleted, ...rest } = req.body;
+        let { name, email, mobile, collegeId, collegeName, isDeleted} = req.body;
 
         if (Object.keys(req.body) == 0) return res.status(400).send({ status: false, msg: "Please provide required details only" })
 
@@ -39,7 +39,7 @@ const createInterns = async function (req, res) {
 
         collegeId = collegeNames._id
 
-        let data = { name, email, mobile, collegeId, collegeName, isDeleted }
+        let data = { name, email, mobile, collegeId, isDeleted }
 
         const internData = await internModels.create(data);
 
