@@ -1,15 +1,12 @@
 
  let nameRegex = /^[a-z]+(([',. -][a-z])?[a-z]*)*$/
  let nameRegex1 = /^[a-zA-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
+ const pattern=/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
 
 const collegeModel = require('../models/collegeModel')
 const internModels=require('../models/internModel')
 
-const stringIsAValidUrl = (str) => {
-    const pattern=/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
-    //if (pattern.test(str))
-    return pattern.test(str)
-};
+
 
 const college = async function (req, res) {
     try {
@@ -27,7 +24,7 @@ const college = async function (req, res) {
 
         if(!nameRegex1.test(fullName)) {return res.status(400).send({status:false, message:"fullName is not Valid, use Alphabets"})}
         
-        if(!stringIsAValidUrl(logoLink)){
+        if(!pattern.test(logoLink)){
             return res.status(400).send({status:false,msg:"Please provide a valid link"})
         }
         const create = await collegeModel.create(data)

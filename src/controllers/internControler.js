@@ -1,7 +1,7 @@
 
 const collegeModels = require("../models/collegeModel");
 const internModels = require("../models/internModel");
-let nameRegex = /^[A-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
+let nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z])?[a-zA-Z]*)*$/
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
@@ -16,7 +16,7 @@ const createInterns = async function (req, res) {
 
         if (!name || !email || !mobile || !collegeName) return res.status(400).send({ status: false, msg: "Mandatory fields are Required" })
 
-        if(nameRegex.test(name)) {return res.status(400).send({status:false, message: "Name is not valid, give alphabets only"})}
+        if(!nameRegex.test(name)) {return res.status(400).send({status:false, message: "Name is not valid, give alphabets only"})}
 
         if (email) {
             if (!emailRegex.test(email)) return res.status(400).send({ status: false, msg: "Invalid Emailid" })
