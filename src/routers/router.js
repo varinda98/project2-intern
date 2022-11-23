@@ -10,5 +10,9 @@ router.post("/functionup/interns",internControl.createInterns)
 
 router.get("/functionup/collegeDetails",collegeControler.getcollegedetail)
 
+router.all("*", function(req, res){
+    return res.status(400).send({status: false, msg: "Path not found" })
+})
 
-module.exports=router
+
+module.exports=router   
