@@ -10,7 +10,7 @@ const createInterns = async function (req, res) {
 
 
     try {
-        let { name, email, mobile, collegeId, collegeName, isDeleted} = req.body;
+        let { name, email, mobile, collegeName,isDeleted} = req.body;
 
         if (Object.keys(req.body) == 0) return res.status(400).send({ status: false, msg: "Please provide required details only" })
 
@@ -21,14 +21,14 @@ const createInterns = async function (req, res) {
         if (email) {
             if (!emailRegex.test(email)) return res.status(400).send({ status: false, msg: "Invalid Emailid" })
         }
-        let findemail = await internModels.find({ email: email })
-        if (findemail.length > 0) return res.status(400).send({ status: false, msg: "email id is already exist" })
+        let findemail = await internModels.findOne({ email: email })
+        if (findemail) return res.status(400).send({ status: false, msg: "email id is already exist" })
 
         if (mobile) {
             if (!mobileRegex.test(mobile)) return res.status(400).send({ status: false, msg: "Invalid Mobile number" })
         }
-        let findnumber = await internModels.find({ mobile: mobile })
-        if (findnumber.length > 0) return res.status(400).send({ status: false, msg: "mobile no. is already exist" })
+        let findnumber = await internModels.findOne({ mobile: mobile })
+        if (findnumber) return res.status(400).send({ status: false, msg: "mobile no. is already exist" })
         
 
         const collegeNames = await collegeModels.findOne({ $or: [{ fullName: collegeName }, { name: collegeName }] })
@@ -46,7 +46,7 @@ const createInterns = async function (req, res) {
         res.status(201).send({ status: true, message: "Registration Successfull", data: internData })
 
     } catch (error) {
-        res.status(500).send({ status: false, message: error.message })
+        res.status(500).send({ status: false, message: error.message })    
 
     }
 }
